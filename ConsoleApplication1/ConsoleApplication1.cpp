@@ -27,32 +27,92 @@ typedef struct
 //1.构建邻接矩阵的二维数组（手动的给定一些值）
 void CreateMGraphExample(MGraph *G)
 {
-	VertexType vexs[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8' };
+	/*VertexType vexs[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8' };
 	int arc[][9] = {
-			{0, 10, INF, INF, INF, 11, INF, INF, INF},
-			{10, 0, 18, INF, INF, INF, 16, INF, 12},
-			{INF, 18, 0, 22, INF, INF, INF, INF, 8},
-			{INF, INF, 22, 0, 20, INF, INF, 16, 21},
-			{INF, INF, INF, 20, 0, 26, INF, 7, INF},
-			{11, INF, INF, INF, 26, 0, 17, INF, INF},
-			{INF, 16, INF, INF, INF, 17, 0, 19, INF},
-			{INF, INF, INF, 16, 7, INF, 19, 0, INF},
-			{INF, 12, 8, 21, INF, INF, INF, INF, 0}
-	};
-
-	G->numVertexes = LENGTH(vexs);
-	G->numEdges = 0;
-
-	for (int i = 0; i < G->numVertexes; i++)
-		G->vexs[i] = vexs[i];
-	for (int i = 0; i < G->numVertexes; i++)
+		{0, 10, INF, INF, INF, 11, INF, INF, INF},
+		{10, 0, 18, INF, INF, INF, 16, INF, 12},
+		{INF, 18, 0, 22, INF, INF, INF, INF, 8},
+		{INF, INF, 22, 0, 20, INF, INF, 16, 21},
+		{INF, INF, INF, 20, 0, 26, INF, 7, INF},
+		{11, INF, INF, INF, 26, 0, 17, INF, INF},
+		{INF, 16, INF, INF, INF, 17, 0, 19, INF},
+		{INF, INF, INF, 16, 7, INF, 19, 0, INF},
+		{INF, 12, 8, 21, INF, INF, INF, INF, 0}
+	};*/
+	int vexCount = 0;
+	printf("请输入顶点个数(顶点计数从0开始)：");
+	cin >> vexCount;
+	G->numVertexes = vexCount;//顶点数
+	//1.创建顶点集合
+	for (int i = 0; i < vexCount; i++)
 	{
-		for (int j = 0; j < G->numVertexes; j++)
+		G->vexs[i] = i;
+	}
+	//2.先构造一个二维数组，值都为INF
+	for (int i = 0; i < vexCount; i++)
+	{
+		for (int j = 0; j < vexCount; j++)
 		{
-			G->arc[i][j] = arc[i][j];
+			if (i == j)
+				G->arc[i][j] = 0;
+			else
+				G->arc[i][j] = INF;
 		}
 	}
+	//3.输入点与点之间的权值
+	int pointA = 0;
+	int pointB = 0;
+	int quan = 0;
+	printf("\n开始输入连接顶点和权值（A<0 结束输入）：\n");
+	do
+	{
+		printf("\n顶点A=");
+		cin >> pointA;
+		if (pointA < 0) 
+		{
+			printf(" 输入结束\n--------------------------\n");
+			 break;
+		}
+		else if (pointA >= vexCount)
+		{
+			printf("索引出界，输入无效。\n--------------------------\n");
+			continue;
+		}
+		printf("顶点B=");
+		cin >> pointB;
+		if (pointB < 0 || pointB >= vexCount)
+		{
+			printf("索引出界，无效。\n--------------------------\n");
+			continue;
+		}
+		if (pointA == pointB)
+		{
+			printf("A=B无效。\n--------------------------\n");
+			continue;
+		}
+		printf("权值=");
+		cin >> quan;
+		if (quan < 0) 
+		{
+			printf("权值负数无效。\n--------------------------\n");
+			continue;
+		}			
+		G->arc[pointA][pointB] = quan;
+		G->arc[pointB][pointA] = quan;
+		printf("\n--------------------------\n");
+	} while (pointA >= 0);
 
+	//二维数组，按对角线将值“对称”
+	for (int i = 0; i < vexCount; i++)
+	{
+		for (int j = 0; j < vexCount; j++)
+		{			
+			printf("   %d   ", G->arc[i][j]);
+		}
+		printf("\n");
+	}
+	//4.边数
+	G->numEdges = 0;
 	for (int i = 0; i < G->numVertexes; i++)
 	{
 		for (int j = 0; j < G->numVertexes; j++)
@@ -63,7 +123,6 @@ void CreateMGraphExample(MGraph *G)
 			}
 		}
 	}
-	printf("邻接矩阵的二维数组：\n");
 	printf("顶点个数=%d，边的个数=%d\n ", G->numVertexes, G->numEdges / 2);
 }
 //2. Prim 算法生成最小生成树 
